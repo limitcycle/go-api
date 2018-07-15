@@ -1,0 +1,9 @@
+package models
+
+type Book struct {
+	ID          int64  `form:"id" json:"id"`
+	Author      string `form:"author" json:"author" binding:"required"`
+	Name        string `form:"name" json:"name" binding:"required"`
+	Description string `form:"description" json:"description" binding:"required"`
+	Status      int8   `form:"status" json:"status" binding:"required"`
+}
