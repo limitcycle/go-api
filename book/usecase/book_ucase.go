@@ -25,7 +25,7 @@ func NewBookUsecase(repos book.BookRepository, timeout time.Duration) book.BookU
 	}
 }
 
-func (buc *bookUsecase) Fetch(c context.Context, cursor string, num int64) ([]*models.Book, string, error) {
+func (buc *bookUsecase) Fetch(c context.Context, cursor string, num int) ([]*models.Book, string, error) {
 	if num == 0 {
 		num = 10
 	}
@@ -45,7 +45,7 @@ func (buc *bookUsecase) Fetch(c context.Context, cursor string, num int64) ([]*m
 	return listBook, nextCursor, err
 }
 
-func (buc *bookUsecase) GetByID(c context.Context, id int64) (*models.Book, error) {
+func (buc *bookUsecase) GetByID(c context.Context, id int) (*models.Book, error) {
 	ctx, cancel := context.WithTimeout(c, buc.contextTimeOut)
 	defer cancel()
 
@@ -100,7 +100,7 @@ func (buc *bookUsecase) Update(c context.Context, b *models.Book) (*models.Book,
 	return buc.bookRepos.Update(ctx, b)
 }
 
-func (buc *bookUsecase) Delete(c context.Context, id int64) (bool, error) {
+func (buc *bookUsecase) Delete(c context.Context, id int) (bool, error) {
 	ctx, cancel := context.WithTimeout(c, buc.contextTimeOut)
 	defer cancel()
 	existedBook, _ := buc.bookRepos.GetByID(ctx, id)

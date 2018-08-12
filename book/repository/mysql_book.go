@@ -44,13 +44,13 @@ func (m *mysqlBookRepository) fetch(ctx context.Context, query string, args ...i
 	return result, nil
 }
 
-func (m *mysqlBookRepository) Fetch(ctx context.Context, cursor string, num int64) ([]*models.Book, error) {
+func (m *mysqlBookRepository) Fetch(ctx context.Context, cursor string, num int) ([]*models.Book, error) {
 	query := `SELECT id, author, name, description, status
 			   FROM book WHERE ID > ? LIMIT ?`
 	return m.fetch(ctx, query, cursor, num)
 }
 
-func (m *mysqlBookRepository) GetByID(ctx context.Context, id int64) (*models.Book, error) {
+func (m *mysqlBookRepository) GetByID(ctx context.Context, id int) (*models.Book, error) {
 	query := `SELECT id, author, name, description, status
 		       FROM book WHERE id = ?`
 
@@ -146,7 +146,7 @@ func (m *mysqlBookRepository) Update(ctx context.Context, b *models.Book) (*mode
 	return b, nil
 }
 
-func (m *mysqlBookRepository) Delete(ctx context.Context, id int64) (bool, error) {
+func (m *mysqlBookRepository) Delete(ctx context.Context, id int) (bool, error) {
 	query := "DELETE FROM book WHERE id = ?"
 
 	stmt, err := m.Conn.PrepareContext(ctx, query)

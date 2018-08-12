@@ -20,7 +20,7 @@ type HttpBookHandler struct {
 	BUsecase bookUcase.BookUsecase
 }
 
-func (b *HttpBookHandler) Fetch(c *gin.Context, cursor string, num int64) {
+func (b *HttpBookHandler) Fetch(c *gin.Context, cursor string, num int) {
 	// numP, err := strconv.Atoi(c.Query("num"))
 	// num := int64(numP)
 	// cursor := c.Query("cursor")
@@ -39,14 +39,13 @@ func (b *HttpBookHandler) Fetch(c *gin.Context, cursor string, num int64) {
 
 func (b *HttpBookHandler) GetByID(c *gin.Context) {
 	idP, err := strconv.Atoi(c.Param("id"))
-	id := int64(idP)
 
 	ctx := c.Request.Context()
 	if ctx == nil {
 		ctx = context.Background()
 	}
 
-	book, err := b.BUsecase.GetByID(ctx, id)
+	book, err := b.BUsecase.GetByID(ctx, idP)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ResponseError{Message: err.Error()})
 		return
@@ -57,12 +56,12 @@ func (b *HttpBookHandler) GetRouter(c *gin.Context) {
 	author := c.Query("author")
 	name := c.Query("name")
 	idP, _ := strconv.Atoi(c.Query("num"))
-	id := int64(idP)
-	cursor := c.Query("cursor")
-	fmt.Printf("author = %s, name = %s, id = %d, cursor = %s", author, name, id, cursor)
 
-	if cursor != "" && id != 0 {
-		b.Fetch(c, cursor, id)
+	cursor := c.Query("cursor")
+	fmt.Printf("author = %s, name = %s, id = %d, cursor = %s", author, name, idP, cursor)
+
+	if cursor != "" && idP != 0 {
+		b.Fetch(c, cursor, idP)
 	} else if author != "" {
 		b.GetByAuthor(c, author)
 	} else if name != "" {
@@ -141,9 +140,9 @@ func getStatusCode(err error) int {
 
 func (b *HttpBookHandler) Update(c *gin.Context) {
 	idP, err := strconv.Atoi(c.Param("id"))
-	id := int64(idP)
+
 	var book models.Book
-	book.ID = id
+	book.ID = idP
 	err = c.ShouldBind(&book)
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, ResponseError{Message: err.Error()})
@@ -163,12 +162,12 @@ func (b *HttpBookHandler) Update(c *gin.Context) {
 
 func (b *HttpBookHandler) Delete(c *gin.Context) {
 	idP, err := strconv.Atoi(c.Param("id"))
-	id := int64(idP)
+
 	ctx := c.Request.Context()
 	if ctx == nil {
 		ctx = context.Background()
 	}
-	_, err = b.BUsecase.Delete(ctx, id)
+	_, err = b.BUsecase.Delete(ctx, idP)
 
 	if err != nil {
 		c.JSON(getStatusCode(err), ResponseError{Message: err.Error()})
